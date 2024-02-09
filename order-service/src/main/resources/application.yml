@@ -1,0 +1,41 @@
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory:
+        wait-duration-in-open-state: 5s
+        event-consumer-buffer-size: '10'
+        register-health-indicator: 'true'
+        automatic-transition-from-open-to-half-open-enabled: 'true'
+        sliding-window-size: '5'
+        permitted-number-of-calls-in-half-open-state: '3'
+        failure-rate-threshold: '50'
+        sliding-window-type: COUNT_BASED
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: '*'
+  health:
+    circuitbreakers:
+      enabled: 'true'
+  endpoint:
+    health:
+      show-details: always
+spring:
+  application:
+    name: order-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
+  datasource:
+    password: fils1?
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/order_service
+server:
+  port: '3031'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

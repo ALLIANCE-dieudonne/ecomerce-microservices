@@ -19,7 +19,7 @@ public class InventoryServiceApplication {
     return args -> {
       Inventory inventory = new Inventory();
       inventory.setSkuCode("i_phone");
-      inventory.setQuantity(1200);
+      inventory.setQuantity(2000);
 
       Inventory inventory1 = new Inventory();
       inventory1.setQuantity(800);

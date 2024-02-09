@@ -20,7 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
-  @Autowired
   private final OrderRepository orderRepository;
   private final WebClient.Builder webClientBuilder;
 
@@ -36,20 +35,25 @@ public class OrderServiceImpl implements OrderService {
 
     List<String> skuCodes = order.getOrderLineItemsList().stream().map(OrderLineItems::getSkuCode).toList();
 
-    //call to the inventory service to see if the product is in stock
-    InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
-      .uri("http://inventory-service/api/v4/inventory", uriBuilder -> uriBuilder.queryParam("sku_code", skuCodes).build())
-      .retrieve()
-      .bodyToMono(InventoryResponse[].class)
-      .block();
-      assert inventoryResponses != null;
-      boolean allProductsInStock = Arrays.stream(inventoryResponses).allMatch(InventoryResponse::isInStock);
+    // Call the inventory service to check if the products are in stock
+    List<InventoryResponse> inventoryResponses = checkInventory(skuCodes);
 
-    if (Boolean.TRUE.equals(allProductsInStock)) {
+    boolean allProductsInStock = inventoryResponses.stream().allMatch(InventoryResponse::isInStock);
+
+    if (allProductsInStock) {
       orderRepository.save(order);
     } else {
-      throw new IllegalArgumentException("No product found in stock!!");
+      throw new IllegalArgumentException("Not all products are in stock!");
     }
+  }
+
+  private List<InventoryResponse> checkInventory(List<String> skuCodes) {
+    return webClientBuilder.build().get()
+      .uri("http://inventory-service/api/v4/inventory", uriBuilder -> uriBuilder.queryParam("sku_code", skuCodes).build())
+      .retrieve()
+      .bodyToFlux(InventoryResponse.class)
+      .collectList()
+      .block();
   }
 
   private OrderLineItems mapToOrderRequestDto(OrderLineItemsDto orderLineItemsDto) {
