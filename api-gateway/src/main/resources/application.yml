@@ -6,16 +6,27 @@ spring:
           uri: lb://product-service
           predicates:
             - Path=/api/v4/products
+          filters:
+            - AuthFilter
 
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/api/v4/orders
+          filters:
+            - AuthFilter
 
         - id: inventory-service
           uri: lb://inventory-service
           predicates:
             - Path=/api/v4/inventory
+          filters:
+            - AuthFilter
+
+        - id: identity-server
+          uri: lb://identity-server
+          predicates:
+            - Path=/api/v4/auth/**
 
         - id: discovery-server
           uri: http://localhost:8761
@@ -29,10 +40,6 @@ spring:
           predicates:
             - Path=/eureka/**
 
-#        - id: identity-service
-#          uri: lb://identity-service
-#          predicates:
-#            - Path=/api/v4/auth/**
 
   application:
     name: api-gateway
