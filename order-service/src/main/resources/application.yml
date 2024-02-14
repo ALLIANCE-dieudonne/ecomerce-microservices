@@ -1,6 +1,7 @@
 resilience4j:
   circuitbreaker:
     instances:
+    ##resilience4j properties
       inventory:
         wait-duration-in-open-state: 5s
         event-consumer-buffer-size: '10'
@@ -10,11 +11,22 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: '3'
         failure-rate-threshold: '50'
         sliding-window-type: COUNT_BASED
+
+     ##resilience4j timeout properties
+  timelimiter:
+    instances:
+      inventory:
+        timeout-duration: 3s
+  retry:
+    instances:
+      inventory:
+        max-attempts: 3
+        wait-duration: 5s
 management:
   endpoints:
     web:
       exposure:
-        exclude: '*'
+        include: '*'
   health:
     circuitbreakers:
       enabled: 'true'
