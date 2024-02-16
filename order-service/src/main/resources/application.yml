@@ -1,7 +1,7 @@
 resilience4j:
   circuitbreaker:
     instances:
-    ##resilience4j properties
+      ##resilience4j properties
       inventory:
         wait-duration-in-open-state: 5s
         event-consumer-buffer-size: '10'
@@ -12,7 +12,7 @@ resilience4j:
         failure-rate-threshold: '50'
         sliding-window-type: COUNT_BASED
 
-     ##resilience4j timeout properties
+      ##resilience4j timeout properties
   timelimiter:
     instances:
       inventory:
@@ -33,6 +33,9 @@ management:
   endpoint:
     health:
       show-details: always
+#  tracing:
+#    sampling:
+#      probability: 1.0
 spring:
   application:
     name: order-service
